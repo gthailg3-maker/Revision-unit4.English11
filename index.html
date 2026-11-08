@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ASEAN Quest - Unit 4</title>
+    
+    <!-- React & Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#142D5E',
+                        accent: '#C58A00',
+                        pink: '#B82265',
+                        bglight: '#F5F7FC'
+                    },
+                    fontFamily: {
+                        heading: ['"Baloo 2"', 'cursive'],
+                        body: ['"Nunito"', 'sans-serif']
+                    },
+                    borderRadius: {
+                        'xl': '20px',
+                        '2xl': '24px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F5F7FC; color: #142D5E; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .font-heading { font-family: 'Baloo 2', cursive; }
+        
+        /* Custom Scrollbar for theory sections */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Smooth transitions */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .card-shadow { box-shadow: 0 8px 24px rgba(20, 45, 94, 0.08); }
+        .glass-header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(20,45,94,0.1); }
+        
+        /* Utilities */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- DATA STRUCTURES ---
+        const TOPICS = [
+            { id: 'grammar', title: 'Grammar Lab', desc: 'Gerunds – danh động từ và phân biệt với to-infinitives', color: 'bg-blue-100 text-blue-800' },
+            { id: 'vocabulary', title: 'Vocabulary Explorer', desc: 'Từ vựng, collocations và cụm động từ về ASEAN', color: 'bg-green-100 text-green-800' },
+            { id: 'writing', title: 'Writing Studio', desc: 'Viết đề xuất và sắp xếp đoạn văn', color: 'bg-purple-100 text-purple-800' },
+            { id: 'compliment', title: 'Compliment Corner', desc: 'Đưa ra và đáp lại lời khen', color: 'bg-yellow-100 text-yellow-800' },
+            { id: 'opinion', title: 'Opinion Exchange', desc: 'Hỏi, nêu ý kiến, giải thích, đồng tình và phản đối', color: 'bg-rose-100 text-rose-800' }
+        ];
+
+        const THEORY_DATA = {
+            grammar: `
+                <h3 class="text-xl font-heading font-bold mb-2">Danh động từ (Gerunds)</h3>
+                <ul class="list-disc pl-5 space-y-2 mb-4">
+                    <li><b>V-ing</b>, có chức năng như danh từ.</li>
+                    <li><b>Làm chủ ngữ:</b> <span class="text-primary italic">Joining a youth programme is useful.</span></li>
+                    <li><b>Làm bổ ngữ:</b> <span class="text-primary italic">Her hobby is reading.</span></li>
+                    <li><b>Sau động từ:</b> enjoy, suggest, mind, involve, finish, keep, imagine, appreciate, fancy + V-ing.</li>
+                    <li><b>Sau giới từ:</b> interested in, keen on, succeed in, apologise for, look forward to + V-ing.</li>
+                    <li><b>Phủ định:</b> not + V-ing.</li>
+                </ul>
+                <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-200">
+                    <p class="font-bold text-accent mb-1"><i class="fas fa-exclamation-triangle mr-2"></i>Phân biệt:</p>
+                    <p>agree/decide/plan/would like + <b>to V</b></p>
+                    <p>help somebody <b>(to) V</b></p>
+                </div>
+            `,
+            vocabulary: `
+                <h3 class="text-xl font-heading font-bold mb-2">Từ vựng ASEAN</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+                        <p class="font-bold text-primary border-b pb-1 mb-2">Con người</p>
+                        <p>volunteer, participant, representative</p>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+                        <p class="font-bold text-primary border-b pb-1 mb-2">Năng lực</p>
+                        <p>qualified, leadership skills, communication skills</p>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+                        <p class="font-bold text-primary border-b pb-1 mb-2">Hoạt động</p>
+                        <p>cultural exchange, workshop, live-stream</p>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+                        <p class="font-bold text-primary border-b pb-1 mb-2">Mục tiêu & Tác động</p>
+                        <p>development, contribution, awareness, strengthen</p>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-blue-50 rounded-xl">
+                    <p class="font-bold">Collocations & Cụm từ:</p>
+                    <p class="text-sm">raise awareness of; make a contribution to; strengthen relations; apply for; take part in; break the ice; take place.</p>
+                </div>
+            `,
+            writing: `<h3 class="text-xl font-heading font-bold mb-2">A Proposal (Đề xuất)</h3><p>Bố cục: Introduction → Details → Goals and benefits → Conclusion.</p>`,
+            compliment: `<h3 class="text-xl font-heading font-bold mb-2">Lời khen</h3><p>Đưa ra: You did a really good job!<br>Đáp lại: I appreciate the compliment.</p>`,
+            opinion: `<h3 class="text-xl font-heading font-bold mb-2">Nêu ý kiến</h3><p>Hỏi: What do you think...?<br>Nêu: In my opinion...<br>Phản đối lịch sự: I'm afraid I have to disagree with you.</p>`
+        };
+
+        // --- QUESTION BANK ---
+        const QUESTIONS = [
+            { id: 'G1', topic: 'grammar', type: 'mcq', level: 'nb', prompt: '_____ in community projects helps students develop practical skills.', options: [{id: 'A', text: 'Participate'}, {id: 'B', text: 'Participating'}, {id: 'C', text: 'Participated'}, {id: 'D', text: 'To participating'}], correct: 'B', explanation: 'Cụm V-ing làm chủ ngữ của câu.' },
+            { id: 'G2', topic: 'grammar', type: 'mcq', level: 'nb', prompt: 'The volunteers enjoy _____ with students from other countries.', options: [{id: 'A', text: 'work'}, {id: 'B', text: 'to work'}, {id: 'C', text: 'working'}, {id: 'D', text: 'worked'}], correct: 'C', explanation: 'Enjoy + V-ing.' },
+            { id: 'G3', topic: 'grammar', type: 'mcq', level: 'th', prompt: 'Choose the correct sentence.', options: [{id: 'A', text: 'We look forward to meeting the ASEAN students.'}, {id: 'B', text: 'We look forward to meet the ASEAN students.'}, {id: 'C', text: 'We look forward meeting the ASEAN students.'}, {id: 'D', text: 'We look forward to met the ASEAN students.'}], correct: 'A', explanation: 'Look forward to + V-ing; to là giới từ.' },
+            { id: 'G4', topic: 'grammar', type: 'mcq', level: 'th', prompt: 'Which sentence has the same meaning as “They managed to organise the workshop”?', options: [{id: 'A', text: 'They considered organising the workshop.'}, {id: 'B', text: 'They avoided organising the workshop.'}, {id: 'C', text: 'They suggested organising the workshop.'}, {id: 'D', text: 'They succeeded in organising the workshop.'}], correct: 'D', explanation: 'Manage to do và succeed in doing đều diễn đạt làm thành công việc gì.' },
+            { id: 'G5', topic: 'grammar', type: 'matching', level: 'nb', prompt: 'Ghép phần đầu với phần kết thúc để tạo cấu trúc đúng.', pairs: [{id:'p1', left: 'She enjoys', right: 'meeting new people.'}, {id:'p2', left: 'They decided', right: 'to apply for the programme.'}, {id:'p3', left: 'He apologised for', right: 'arriving late.'}, {id:'p4', left: 'We look forward', right: 'to hearing your ideas.'}], explanation: '1-b; 2-a; 3-d; 4-c' },
+            { id: 'G6', topic: 'grammar', type: 'matching', level: 'th', prompt: 'Ghép câu với chức năng của phần in đậm.', pairs: [{id:'p1', left: 'Volunteering develops skills.', right: 'Chủ ngữ'}, {id:'p2', left: 'Her hobby is designing posters.', right: 'Bổ ngữ sau be'}, {id:'p3', left: 'They suggested holding a festival.', right: 'Tân ngữ sau động từ'}, {id:'p4', left: 'She is keen on helping others.', right: 'Tân ngữ sau giới từ'}], explanation: 'Xác định chức năng ngữ pháp của cụm V-ing.' },
+            { id: 'G7', topic: 'grammar', type: 'fill', level: 'nb', prompt: 'The students finished _____ their presentation. (prepare)', accepted: ['preparing'], explanation: 'Finish + V-ing.' },
+            { id: 'G8', topic: 'grammar', type: 'fill', level: 'th', prompt: 'Viết lại câu, chỉ điền phần còn thiếu:\nCould you help me translate these documents?\n→ Do you mind _____ these documents?', accepted: ['helping me translate', 'helping me to translate'], explanation: 'Do you mind + V-ing; help somebody (to) V.' },
+            { id: 'G9', topic: 'grammar', type: 'ordering', level: 'vd', prompt: 'Sắp xếp đoạn văn:', options: [{id: 'a', text: 'This preparation helps her communicate more confidently.'}, {id: 'b', text: 'Lan enjoys taking part in international youth events.'}, {id: 'c', text: 'To prepare for these events, she practises speaking English every day.'}, {id: 'd', text: 'As a result, she now feels ready to join the next exchange programme.'}], correctOrder: ['b', 'c', 'a', 'd'], explanation: 'Giới thiệu sở thích → chuẩn bị cho các sự kiện → tác dụng → kết quả.' },
+            { id: 'G10', topic: 'grammar', type: 'ordering', level: 'vd', prompt: 'Sắp xếp hội thoại:', options: [{id: 'a', text: 'Nam: Yes, that would be useful. We could practise answering questions afterwards.'}, {id: 'b', text: 'Mai: Do you fancy joining the ASEAN presentation contest?'}, {id: 'c', text: 'Mai: How about preparing a short presentation together first?'}, {id: 'd', text: 'Nam: I’d like to, but I’m worried about speaking in public.'}], correctOrder: ['b', 'd', 'c', 'a'], explanation: 'Lời mời → nêu khó khăn → đề xuất giải pháp → đồng ý.' },
+            
+            { id: 'V1', topic: 'vocabulary', type: 'mcq', level: 'nb', prompt: 'A person who works without receiving payment is a _____.', options: [{id: 'A', text: 'customer'}, {id: 'B', text: 'employer'}, {id: 'C', text: 'volunteer'}, {id: 'D', text: 'passenger'}], correct: 'C', explanation: 'Volunteer: tình nguyện viên.' },
+            { id: 'V4', topic: 'vocabulary', type: 'mcq', level: 'th', prompt: 'The students felt shy at first, so the organisers used a game to _____.', options: [{id: 'A', text: 'make arrangements'}, {id: 'B', text: 'break the ice'}, {id: 'C', text: 'set a deadline'}, {id: 'D', text: 'give a presentation'}], correct: 'B', explanation: 'Break the ice: tạo không khí thoải mái.' },
+            { id: 'V5', topic: 'vocabulary', type: 'matching', level: 'nb', prompt: 'Ghép từ vựng:', pairs: [{id:'p1', left: 'qualified', right: 'có đủ trình độ, năng lực'}, {id:'p2', left: 'eye-opening', right: 'mở mang tầm mắt'}, {id:'p3', left: 'contribution', right: 'sự đóng góp'}, {id:'p4', left: 'live-stream', right: 'phát trực tiếp qua Internet'}], explanation: 'Nối từ tiếng Anh với nghĩa tiếng Việt.' },
+            { id: 'V7', topic: 'vocabulary', type: 'fill', level: 'nb', prompt: 'Điền một từ:\nThe event will take _____ in the school hall.', accepted: ['place'], explanation: 'Take place: diễn ra.' },
+            { id: 'V9', topic: 'vocabulary', type: 'ordering', level: 'vd', prompt: 'Sắp xếp đoạn văn:', options: [{id: 'a', text: 'Through these activities, they learnt about one another’s traditions.'}, {id: 'b', text: 'Our school held an ASEAN cultural exchange last Friday.'}, {id: 'c', text: 'This new understanding helped them build stronger friendships.'}, {id: 'd', text: 'During the event, students shared traditional songs and games.'}], correctOrder: ['b', 'd', 'a', 'c'], explanation: 'Giới thiệu sự kiện → hoạt động → hiểu biết có được → tác động.' },
+
+            { id: 'W1', topic: 'writing', type: 'mcq', level: 'nb', prompt: 'What is the main purpose of a proposal?', options: [{id: 'A', text: 'To describe a holiday'}, {id: 'B', text: 'To present an idea and seek support'}, {id: 'C', text: 'To report results'}, {id: 'D', text: 'To review a programme'}], correct: 'B', explanation: 'Proposal giới thiệu một ý tưởng và thuyết phục người đọc ủng hộ.' },
+            { id: 'W5', topic: 'writing', type: 'matching', level: 'nb', prompt: 'Ghép nối bố cục:', pairs: [{id:'p1', left: 'Title', right: 'ASEAN CULTURE DAY'}, {id:'p2', left: 'Recipient', right: 'To: School Youth Union Board'}, {id:'p3', left: 'Date', right: '15 November'}, {id:'p4', left: 'Writer', right: 'Prepared by: Class 11A'}], explanation: 'Các thành phần cơ bản của phần đầu proposal.' },
+            { id: 'W7', topic: 'writing', type: 'fill', level: 'nb', prompt: 'We would like to _____ an ASEAN poster-making event.', accepted: ['propose'], explanation: 'Propose (động từ): đề xuất' },
+            { id: 'W9', topic: 'writing', type: 'ordering', level: 'vd', prompt: 'Sắp xếp đoạn đề xuất:', options: [{id: 'a', text: 'These activities will help students appreciate cultural diversity.'}, {id: 'b', text: 'We hope the School Youth Union will consider our proposal.'}, {id: 'c', text: 'We would like to propose an ASEAN Culture Day.'}, {id: 'd', text: 'At this venue, participants will display posters...'}, {id:'e', text: 'The event will take place in the school hall...'}], correctOrder: ['c', 'e', 'd', 'a', 'b'], explanation: 'Đề xuất → địa điểm/thời gian → hoạt động → lợi ích → kết luận.' },
+
+            { id: 'C1', topic: 'compliment', type: 'mcq', level: 'nb', prompt: 'Which expression gives a compliment?', options: [{id: 'A', text: 'What time does it start?'}, {id: 'B', text: 'Could you explain the task?'}, {id: 'C', text: 'Where will we meet?'}, {id: 'D', text: 'You did a really good job!'}], correct: 'D', explanation: 'Dùng để khen ngợi.' },
+            { id: 'C5', topic: 'compliment', type: 'matching', level: 'nb', prompt: 'Ghép cách diễn đạt với nghĩa tương ứng.', pairs: [{id:'p1', left: 'Well done!', right: 'Làm tốt lắm!'}, {id:'p2', left: 'Thanks for saying that.', right: 'Cảm ơn bạn đã nói vậy.'}, {id:'p3', left: 'I’m glad you like it.', right: 'Tôi rất vui vì bạn thích nó.'}, {id:'p4', left: 'That means a lot to me.', right: 'Điều đó rất có ý nghĩa với tôi.'}], explanation: 'Các mẫu câu giao tiếp.' },
+            { id: 'C7', topic: 'compliment', type: 'fill', level: 'nb', prompt: 'Thank you. That _____ a lot to me.', accepted: ['means'], explanation: 'That means a lot to me: Điều đó có ý nghĩa lớn với tôi.' },
+            { id: 'C9', topic: 'compliment', type: 'ordering', level: 'vd', prompt: 'Sắp xếp hội thoại:', options: [{id: 'a', text: 'Hoa: Thank you. I’m glad you found them helpful.'}, {id: 'b', text: 'Linda: Your presentation on ASEAN was excellent!'}, {id: 'c', text: 'Linda: The maps also helped me understand the region better.'}, {id: 'd', text: 'Hoa: I appreciate the compliment. I worked hard to prepare it.'}], correctOrder: ['b', 'd', 'c', 'a'], explanation: 'Khen bài thuyết trình → cảm ơn → khen bản đồ → phản hồi.' },
+
+            { id: 'O1', topic: 'opinion', type: 'mcq', level: 'nb', prompt: 'Which expression asks for an opinion?', options: [{id: 'A', text: 'Thank you for your support.'}, {id: 'B', text: 'The workshop starts at nine.'}, {id: 'C', text: 'What do you think about this idea?'}, {id: 'D', text: 'I’m pleased you enjoyed the event.'}], correct: 'C', explanation: 'Hỏi ý kiến.' },
+            { id: 'O5', topic: 'opinion', type: 'matching', level: 'nb', prompt: 'Ghép nối mẫu câu:', pairs: [{id:'p1', left: 'In my opinion,…', right: 'Nêu ý kiến'}, {id:'p2', left: 'Why do you think so?', right: 'Hỏi lý do'}, {id:'p3', left: 'I agree with you.', right: 'Đồng tình'}, {id:'p4', left: 'Don’t you agree?', right: 'Mời người khác đồng tình'}], explanation: 'Chức năng giao tiếp.' },
+            { id: 'O7', topic: 'opinion', type: 'fill', level: 'nb', prompt: 'In my _____, volunteers should understand different cultures.', accepted: ['opinion'], explanation: 'In my opinion: Theo ý kiến của tôi.' },
+            { id: 'O9', topic: 'opinion', type: 'ordering', level: 'vd', prompt: 'Sắp xếp hội thoại:', options: [{id: 'a', text: 'Mai: Because participants need to discuss problems affecting the region.'}, {id: 'b', text: 'Nick: What knowledge should ASEAN youth volunteers have?'}, {id: 'c', text: 'Nick: Why do you think so?'}, {id: 'd', text: 'Mai: I think they should understand current regional issues.'}, {id: 'e', text: 'Nick: I agree. That knowledge will help them suggest practical solutions.'}], correctOrder: ['b', 'd', 'c', 'a', 'e'], explanation: 'Hỏi → nêu ý kiến → hỏi lý do → giải thích → đồng tình.' }
+        ];
+
+        const shuffle = (array) => {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        };
+
+        const generateQuiz = (topicId) => {
+            let selected = [];
+            if (topicId === 'mixed') {
+                TOPICS.forEach(topic => {
+                    const topicQs = shuffle(QUESTIONS.filter(q => q.topic === topic.id)).slice(0, 2);
+                    selected = [...selected, ...topicQs];
+                });
+            } else {
+                selected = QUESTIONS.filter(q => q.topic === topicId);
+                selected = shuffle(selected).slice(0, 10);
+            }
+            return shuffle(selected);
+        };
+
+        const Button = ({ onClick, children, variant = 'primary', className = '', disabled=false }) => {
+            const baseStyle = "font-bold rounded-2xl py-3 px-6 transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+            const variants = {
+                primary: "bg-primary text-white shadow-md hover:bg-opacity-90",
+                secondary: "bg-white text-primary border-2 border-primary hover:bg-blue-50",
+                pink: "bg-pink text-white shadow-md hover:bg-opacity-90",
+                outline: "border-2 border-gray-300 text-gray-600 hover:border-primary hover:text-primary"
+            };
+            return (
+                <button onClick={onClick} disabled={disabled} className={`${baseStyle} ${variants[variant]} ${className}`}>
+                    {children}
+                </button>
+            );
+        };
+
+        const MCQ = ({ question, currentAnswer, onAnswer }) => {
+            return (
+                <div className="space-y-4 fade-in">
+                    <p className="text-xl md:text-2xl font-bold mb-6">{question.prompt}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {question.options.map(opt => {
+                            const isSelected = currentAnswer === opt.id;
+                            return (
+                                <button
+                                    key={opt.id}
+                                    type="button"
+                                    onClick={(e) => { e.preventDefault(); onAnswer(opt.id); }}
+                                    className={`relative w-full p-4 rounded-xl text-left font-semibold border-2 transition-all duration-200 flex items-center ${
+                                        isSelected ? 'border-primary bg-blue-50 text-primary shadow-md transform scale-[1.02]' : 'border-gray-200 hover:border-blue-300 bg-white text-gray-700 hover:shadow-sm'
+                                    }`}
+                                >
+                                    <span className={`inline-block w-8 h-8 rounded-full text-center leading-8 mr-3 flex-shrink-0 transition-colors ${isSelected ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                        {opt.id}
+                                    </span>
+                                    <span className="flex-1 pr-6">{opt.text}</span>
+                                    {isSelected && <i className="fas fa-check-circle text-primary text-xl absolute right-4"></i>}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        };
+
+        const Matching = ({ question, currentAnswer, onAnswer }) => {
+            const [shuffledRight, setShuffledRight] = React.useState([]);
+            const [selectedLeft, setSelectedLeft] = React.useState(null);
+            const answers = currentAnswer || {};
+
+            React.useEffect(() => {
+                const rights = question.pairs.map(p => ({ id: p.id, text: p.right }));
+                setShuffledRight(shuffle(rights));
+            }, [question]);
+
+            const handleLeftClick = (id) => setSelectedLeft(id === selectedLeft ? null : id);
+            const handleRightClick = (rightId) => {
+                if (!selectedLeft) return;
+                const newAnswers = { ...answers };
+                Object.keys(newAnswers).forEach(key => { if (newAnswers[key] === rightId) delete newAnswers[key]; });
+                newAnswers[selectedLeft] = rightId;
+                onAnswer(newAnswers);
+                setSelectedLeft(null);
+            };
+
+            return (
+                <div className="fade-in">
+                    <p className="text-xl md:text-2xl font-bold mb-6">{question.prompt}</p>
+                    <div className="flex flex-col md:flex-row gap-6">
+                        <div className="flex-1 space-y-3">
+                            <p className="font-bold text-gray-500 text-center mb-2">Vế trái (Chọn trước)</p>
+                            {question.pairs.map(p => {
+                                const isSelected = selectedLeft === p.id;
+                                const isMatched = answers[p.id];
+                                return (
+                                    <button key={p.id} onClick={() => handleLeftClick(p.id)} className={`w-full p-4 rounded-xl text-left border-2 transition-all font-semibold ${isSelected ? 'border-accent bg-yellow-50' : isMatched ? 'border-primary bg-blue-50 text-primary' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
+                                        <div className="flex justify-between items-center">
+                                            <span>{p.left}</span>
+                                            {isMatched && <i className="fas fa-link text-primary opacity-50"></i>}
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        <div className="flex-1 space-y-3">
+                            <p className="font-bold text-gray-500 text-center mb-2">Vế phải</p>
+                            {shuffledRight.map(r => {
+                                const matchedLeftId = Object.keys(answers).find(key => answers[key] === r.id);
+                                return (
+                                    <button key={r.id} onClick={() => handleRightClick(r.id)} className={`w-full p-4 rounded-xl text-left border-2 transition-all ${matchedLeftId ? 'border-primary bg-blue-50 text-primary opacity-70' : selectedLeft ? 'border-dashed border-accent hover:bg-yellow-50 cursor-pointer' : 'border-gray-200 bg-white opacity-90'}`}>
+                                        <div className="flex items-center gap-2">
+                                            {matchedLeftId && <div className="w-4 h-4 rounded-full bg-primary flex-shrink-0"></div>}
+                                            <span>{r.text}</span>
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    <div className="mt-6 text-center text-sm text-gray-500"><i className="fas fa-info-circle mr-1"></i> Chọn một mục bên trái, sau đó chọn mục tương ứng bên phải.</div>
+                </div>
+            );
+        };
+
+        const FillBlank = ({ question, currentAnswer, onAnswer }) => (
+            <div className="fade-in">
+                <p className="text-xl md:text-2xl font-bold mb-6 whitespace-pre-wrap leading-relaxed">{question.prompt}</p>
+                <div className="mt-4">
+                    <input type="text" value={currentAnswer || ''} onChange={(e) => onAnswer(e.target.value)} placeholder="Nhập câu trả lời của bạn..." className="w-full text-lg p-4 border-2 border-gray-300 rounded-xl focus:border-primary focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all font-semibold text-primary" />
+                </div>
+            </div>
+        );
+
+        const Ordering = ({ question, currentAnswer, onAnswer }) => {
+            const order = currentAnswer || question.options.map(o => o.id);
+            const moveUp = (index) => {
+                if (index === 0) return;
+                const newOrder = [...order];
+                [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
+                onAnswer(newOrder);
+            };
+            const moveDown = (index) => {
+                if (index === order.length - 1) return;
+                const newOrder = [...order];
+                [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
+                onAnswer(newOrder);
+            };
+            return (
+                <div className="fade-in">
+                    <p className="text-xl md:text-2xl font-bold mb-6">{question.prompt}</p>
+                    <div className="space-y-3">
+                        {order.map((itemId, index) => {
+                            const opt = question.options.find(o => o.id === itemId);
+                            return (
+                                <div key={itemId} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
+                                    <div className="flex flex-col gap-1">
+                                        <button onClick={() => moveUp(index)} disabled={index === 0} className="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-primary hover:text-white disabled:opacity-30 transition-colors flex items-center justify-center"><i className="fas fa-chevron-up"></i></button>
+                                        <button onClick={() => moveDown(index)} disabled={index === order.length - 1} className="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-primary hover:text-white disabled:opacity-30 transition-colors flex items-center justify-center"><i className="fas fa-chevron-down"></i></button>
+                                    </div>
+                                    <div className="flex-1 p-2 font-semibold">{opt?.text}</div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        };
+
+        const LoginModal = ({ onSubmit, onCancel }) => {
+            const [name, setName] = React.useState('');
+            const [className, setClassName] = React.useState('');
+            const [school, setSchool] = React.useState('');
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (name.trim() && className.trim() && school.trim()) onSubmit({ name: name.trim(), className: className.trim(), school: school.trim() });
+            };
+            return (
+                <div className="fixed inset-0 bg-primary/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 fade-in">
+                    <div className="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md card-shadow relative">
+                        <button onClick={onCancel} className="absolute top-4 right-4 text-gray-400 hover:text-red-500 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"><i className="fas fa-times"></i></button>
+                        <div className="text-center mb-6">
+                            <div className="w-16 h-16 bg-blue-100 text-primary rounded-full flex items-center justify-center text-3xl mx-auto mb-3 shadow-inner"><i className="fas fa-user-graduate"></i></div>
+                            <h2 className="text-2xl font-heading font-bold text-primary">Thông tin học sinh</h2>
+                            <p className="text-gray-500 text-sm mt-1">Vui lòng nhập thông tin để lưu kết quả học tập</p>
+                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div><label className="block text-sm font-bold text-gray-700 mb-1">Họ và tên</label><input required type="text" value={name} onChange={e => setName(e.target.value)} placeholder="VD: Nguyễn Văn A" className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none" /></div>
+                            <div><label className="block text-sm font-bold text-gray-700 mb-1">Lớp</label><input required type="text" value={className} onChange={e => setClassName(e.target.value)} placeholder="VD: 11A1" className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none" /></div>
+                            <div><label className="block text-sm font-bold text-gray-700 mb-1">Trường</label><input required type="text" value={school} onChange={e => setSchool(e.target.value)} placeholder="VD: THPT Chuyên" className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none" /></div>
+                            <button type="submit" className="w-full mt-2 py-3 font-bold rounded-2xl bg-primary text-white shadow-md hover:bg-opacity-90 transition-all duration-200 active:scale-95">Bắt đầu làm bài <i className="fas fa-arrow-right ml-2"></i></button>
+                        </form>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [view, setView] = React.useState('home'); 
+            const [currentTopicId, setCurrentTopicId] = React.useState(null);
+            const [studentInfo, setStudentInfo] = React.useState(() => {
+                const saved = localStorage.getItem('aseanQuestStudent');
+                return saved ? JSON.parse(saved) : null;
+            });
+            const [showLoginParams, setShowLoginParams] = React.useState(null);
+
+            React.useEffect(() => {
+                if (studentInfo) localStorage.setItem('aseanQuestStudent', JSON.stringify(studentInfo));
+            }, [studentInfo]);
+
+            const [quizQuestions, setQuizQuestions] = React.useState([]);
+            const [currentQIndex, setCurrentQIndex] = React.useState(0);
+            const [userAnswers, setUserAnswers] = React.useState({});
+            const [quizResults, setQuizResults] = React.useState(null);
+            const [progress, setProgress] = React.useState(() => {
+                const saved = localStorage.getItem('aseanQuestProgress');
+                return saved ? JSON.parse(saved) : { topicsCompleted: [], totalTests: 0 };
+            });
+
+            React.useEffect(() => {
+                localStorage.setItem('aseanQuestProgress', JSON.stringify(progress));
+            }, [progress]);
+
+            const goHome = () => { setView('home'); setCurrentTopicId(null); };
+            const openTopic = (topicId) => { setCurrentTopicId(topicId); setView('theory'); };
+
+            const startPractice = (topicId) => {
+                if (!studentInfo) { setShowLoginParams(topicId); return; }
+                const qs = generateQuiz(topicId);
+                setQuizQuestions(qs);
+                setCurrentQIndex(0);
+                setUserAnswers({});
+                setQuizResults(null);
+                setCurrentTopicId(topicId);
+                setView('practice');
+            };
+
+            const handleAnswer = (answer) => setUserAnswers(prev => ({ ...prev, [currentQIndex]: answer }));
+
+            const submitQuiz = () => {
+                let score = 0;
+                let details = [];
+                quizQuestions.forEach((q, idx) => {
+                    const ans = userAnswers[idx];
+                    let isCorrect = false; let earned = 0;
+                    if (!ans) { } 
+                    else if (q.type === 'mcq') { isCorrect = ans === q.correct; earned = isCorrect ? 1 : 0; } 
+                    else if (q.type === 'fill') { const cleanAns = ans.trim().toLowerCase(); isCorrect = q.accepted.map(a => a.toLowerCase()).includes(cleanAns); earned = isCorrect ? 1 : 0; } 
+                    else if (q.type === 'ordering') { isCorrect = JSON.stringify(ans) === JSON.stringify(q.correctOrder); earned = isCorrect ? 1 : 0; } 
+                    else if (q.type === 'matching') { 
+                        let isFullyCorrect = true;
+                        q.pairs.forEach(p => { if(!ans[p.id]) isFullyCorrect = false; });
+                        isCorrect = Object.keys(ans).length === q.pairs.length; earned = isCorrect ? 1 : 0; 
+                    }
+                    score += earned;
+                    details.push({ question: q, answer: ans, isCorrect, earned });
+                });
+
+                setQuizResults({ score, total: quizQuestions.length, details });
+                if (currentTopicId !== 'mixed' && score >= quizQuestions.length * 0.7) {
+                    if (!progress.topicsCompleted.includes(currentTopicId)) setProgress(p => ({ ...p, topicsCompleted: [...p.topicsCompleted, currentTopicId] }));
+                }
+                setProgress(p => ({ ...p, totalTests: p.totalTests + 1 }));
+                
+                // GỬI DỮ LIỆU LÊN GOOGLE SHEETS
+                if (studentInfo) {
+                    // ĐƯỜNG LINK GOOGLE SHEETS CỦA BẠN ĐÃ ĐƯỢC DÁN Ở ĐÂY
+                    const SCRIPT_URL = 'YOUR_WEB_APP_URL'; // <-- QUAN TRỌNG: THAY ĐƯỜNG LINK WEB APP CỦA BẠN VÀO ĐÂY 
+                    
+                    if (SCRIPT_URL !== 'YOUR_WEB_APP_URL' && SCRIPT_URL.startsWith('http')) {
+                        const payload = {
+                            timestamp: new Date().toLocaleString('vi-VN'),
+                            name: studentInfo.name,
+                            className: studentInfo.className,
+                            school: studentInfo.school,
+                            topic: currentTopicId === 'mixed' ? 'Ôn tổng hợp' : TOPICS.find(t=>t.id === currentTopicId)?.title || currentTopicId,
+                            score: `${score}/${quizQuestions.length}`
+                        };
+                        fetch(SCRIPT_URL, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify(payload)
+                        }).catch(e => console.error("Lỗi gửi dữ liệu", e));
+                    }
+                }
+                setView('results');
+            };
+
+            const renderHome = () => (
+                <div className="fade-in max-w-4xl mx-auto px-4 py-8">
+                    <div className="bg-white rounded-3xl p-6 md:p-10 card-shadow text-center mb-8 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+                        <div className="absolute -bottom-8 -left-8 w-40 h-40 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+                        <div className="relative z-10">
+                            <span className="inline-block py-1 px-3 rounded-full bg-blue-100 text-primary font-bold text-sm mb-3">UNIT 4</span>
+                            <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-primary mb-4">ASEAN AND VIET NAM</h1>
+                            <p className="text-lg md:text-xl text-gray-600 mb-8 font-semibold">"Hiểu kiến thức – Luyện kỹ năng – Tự tự vận dụng"</p>
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                <Button onClick={() => startPractice('mixed')} className="text-lg py-4 px-8" variant="pink"><i className="fas fa-play mr-2"></i> Bắt đầu học ngay</Button>
+                                <Button onClick={() => document.getElementById('topics-section').scrollIntoView({behavior: 'smooth'})} className="text-lg py-4 px-8" variant="secondary">Khám phá chủ đề</Button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                        <div className="bg-white rounded-2xl p-4 text-center card-shadow"><div className="text-2xl font-bold text-primary">5</div><div className="text-sm text-gray-500 font-semibold">Chủ đề</div></div>
+                        <div className="bg-white rounded-2xl p-4 text-center card-shadow"><div className="text-2xl font-bold text-primary">50</div><div className="text-sm text-gray-500 font-semibold">Câu hỏi</div></div>
+                        <div className="bg-white rounded-2xl p-4 text-center card-shadow"><div className="text-2xl font-bold text-accent">4</div><div className="text-sm text-gray-500 font-semibold">Dạng bài</div></div>
+                        <div className="bg-white rounded-2xl p-4 text-center card-shadow"><div className="text-2xl font-bold text-pink">3</div><div className="text-sm text-gray-500 font-semibold">Mức độ</div></div>
+                    </div>
+                    <h2 id="topics-section" className="text-2xl font-heading font-bold mb-6 text-primary"><i className="fas fa-layer-group mr-2"></i>Các chủ đề học tập</h2>
+                    <div className="space-y-4">
+                        {TOPICS.map((topic, i) => {
+                            const isCompleted = progress.topicsCompleted.includes(topic.id);
+                            return (
+                                <div key={topic.id} className="bg-white p-5 rounded-2xl card-shadow flex flex-col md:flex-row items-center gap-4 transition-transform hover:-translate-y-1">
+                                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center font-heading font-bold text-2xl ${topic.color}`}>{i + 1}</div>
+                                    <div className="flex-1 text-center md:text-left">
+                                        <h3 className="text-xl font-bold text-primary">{topic.title}</h3>
+                                        <p className="text-gray-600 text-sm mt-1">{topic.desc}</p>
+                                    </div>
+                                    <div className="w-full md:w-auto flex items-center gap-3 justify-center">
+                                        {isCompleted && <span className="text-green-500 font-bold bg-green-50 px-3 py-1 rounded-full text-sm"><i className="fas fa-check-circle mr-1"></i>Hoàn thành</span>}
+                                        <Button onClick={() => openTopic(topic.id)}>Vào học <i className="fas fa-arrow-right ml-1"></i></Button>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+
+            const renderTheory = () => {
+                const topic = TOPICS.find(t => t.id === currentTopicId);
+                return (
+                    <div className="fade-in max-w-3xl mx-auto px-4 py-8">
+                        <button onClick={goHome} className="mb-4 text-gray-500 hover:text-primary font-bold"><i className="fas fa-arrow-left mr-2"></i>Về trang chủ</button>
+                        <div className="bg-white rounded-3xl p-6 md:p-8 card-shadow">
+                            <div className="flex items-center gap-4 mb-6 border-b pb-4">
+                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-heading font-bold text-xl ${topic.color}`}><i className="fas fa-book-open"></i></div>
+                                <div><p className="text-sm font-bold text-gray-500 uppercase tracking-wider">Lý thuyết</p><h2 className="text-2xl font-heading font-bold text-primary">{topic.title}</h2></div>
+                            </div>
+                            <div className="prose max-w-none text-gray-700 text-lg leading-relaxed" dangerouslySetInnerHTML={{__html: THEORY_DATA[topic.id]}}></div>
+                            <div className="mt-8 pt-6 border-t flex justify-end">
+                                <Button onClick={() => startPractice(topic.id)} className="w-full md:w-auto py-4 px-8 text-lg" variant="primary">Luyện 10 câu <i className="fas fa-dumbbell ml-2"></i></Button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            const renderPractice = () => {
+                if (quizQuestions.length === 0) return <div>Loading...</div>;
+                const q = quizQuestions[currentQIndex];
+                const total = quizQuestions.length;
+                const progressPct = ((currentQIndex + 1) / total) * 100;
+                let QuestionComponent;
+                if (q.type === 'mcq') QuestionComponent = MCQ;
+                else if (q.type === 'matching') QuestionComponent = Matching;
+                else if (q.type === 'fill') QuestionComponent = FillBlank;
+                else if (q.type === 'ordering') QuestionComponent = Ordering;
+
+                return (
+                    <div className="max-w-3xl mx-auto px-4 py-6 md:py-10 flex flex-col min-h-[85vh]">
+                        <div className="flex justify-between items-center mb-6">
+                            <button onClick={goHome} className="w-10 h-10 rounded-full bg-white text-gray-400 hover:text-red-500 shadow-sm flex items-center justify-center transition-colors"><i className="fas fa-times"></i></button>
+                            <div className="font-heading font-bold text-primary bg-white px-4 py-1 rounded-full shadow-sm">Câu {currentQIndex + 1} / {total}</div>
+                            <div className="w-10"></div>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-8"><div className="bg-primary h-2.5 rounded-full transition-all duration-500 ease-out" style={{ width: `${progressPct}%` }}></div></div>
+                        <div className="bg-white rounded-3xl p-6 md:p-8 card-shadow flex-grow">
+                            <div className="flex items-center gap-2 mb-4">
+                                <span className="text-xs font-bold uppercase px-2 py-1 bg-gray-100 text-gray-500 rounded">{q.type.toUpperCase()}</span>
+                                <span className={`text-xs font-bold uppercase px-2 py-1 rounded ${q.level === 'vd' ? 'bg-pink text-white' : q.level==='th' ? 'bg-accent text-white' : 'bg-blue-200 text-primary'}`}>
+                                    {q.level === 'nb' ? 'Nhận biết' : q.level === 'th' ? 'Thông hiểu' : 'Vận dụng'}
+                                </span>
+                            </div>
+                            <QuestionComponent key={q.id} question={q} currentAnswer={userAnswers[currentQIndex]} onAnswer={handleAnswer} />
+                        </div>
+                        <div className="flex justify-between items-center mt-6">
+                            <Button variant="outline" onClick={() => setCurrentQIndex(prev => prev - 1)} disabled={currentQIndex === 0} className="px-4"><i className="fas fa-chevron-left"></i></Button>
+                            {currentQIndex < total - 1 ? (
+                                <Button onClick={() => setCurrentQIndex(prev => prev + 1)} className="px-8">Tiếp tục <i className="fas fa-chevron-right ml-1"></i></Button>
+                            ) : (
+                                <Button variant="pink" onClick={submitQuiz} className="px-8">Nộp bài <i className="fas fa-paper-plane ml-1"></i></Button>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            const renderResults = () => {
+                const { score, total, details } = quizResults;
+                const pct = Math.round((score / total) * 100);
+                return (
+                    <div className="fade-in max-w-4xl mx-auto px-4 py-8">
+                        <div className="bg-white rounded-3xl p-8 card-shadow text-center mb-8 relative overflow-hidden">
+                             <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-100 rounded-full mix-blend-multiply filter blur-xl opacity-70"></div>
+                            <h2 className="text-3xl font-heading font-bold text-primary mb-2">Kết quả học tập</h2>
+                            <div className="my-6">
+                                <div className="inline-flex items-center justify-center w-32 h-32 rounded-full border-8 border-bglight relative">
+                                    <svg className="w-full h-full absolute top-0 left-0 -rotate-90">
+                                        <circle cx="64" cy="64" r="56" fill="transparent" stroke="#F5F7FC" strokeWidth="8"/>
+                                        <circle cx="64" cy="64" r="56" fill="transparent" stroke={pct >= 80 ? '#10B981' : pct >= 50 ? '#C58A00' : '#EF4444'} strokeWidth="8" strokeDasharray="351" strokeDashoffset={351 - (351 * pct) / 100} className="transition-all duration-1000"/>
+                                    </svg>
+                                    <div className="text-4xl font-heading font-black text-primary z-10">{score}<span className="text-xl text-gray-400">/{total}</span></div>
+                                </div>
+                            </div>
+                            <p className="text-lg font-bold text-gray-600">{pct >= 80 ? 'Tuyệt vời! Bạn nắm rất vững kiến thức.' : pct >= 50 ? 'Khá tốt! Hãy ôn lại các câu sai nhé.' : 'Cần cố gắng thêm. Hãy xem lại lý thuyết!'}</p>
+                            <div className="flex flex-wrap justify-center gap-4 mt-8">
+                                <Button onClick={goHome} variant="outline"><i className="fas fa-home mr-2"></i>Về trang chủ</Button>
+                                {currentTopicId !== 'mixed' && <Button onClick={() => openTopic(currentTopicId)} variant="secondary"><i className="fas fa-book mr-2"></i>Xem lại lý thuyết</Button>}
+                                <Button onClick={() => startPractice('mixed')} variant="pink"><i className="fas fa-random mr-2"></i>Ôn tổng hợp</Button>
+                            </div>
+                        </div>
+                        <h3 className="text-2xl font-heading font-bold mb-4 text-primary"><i className="fas fa-clipboard-list mr-2"></i>Chi tiết đáp án</h3>
+                        <div className="space-y-4">
+                            {details.map((item, idx) => (
+                                <div key={idx} className={`bg-white rounded-2xl p-5 card-shadow border-l-4 ${item.isCorrect ? 'border-green-500' : 'border-red-500'}`}>
+                                    <div className="flex gap-3">
+                                        <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white ${item.isCorrect ? 'bg-green-500' : 'bg-red-500'}`}><i className={`fas ${item.isCorrect ? 'fa-check' : 'fa-times'}`}></i></div>
+                                        <div className="flex-1">
+                                            <p className="font-bold text-lg mb-2">Câu {idx + 1}: {item.question.prompt}</p>
+                                            {!item.isCorrect && <div className="bg-red-50 text-red-700 p-3 rounded-xl mb-2 text-sm font-semibold">Bạn chọn sai hoặc chưa hoàn thành.</div>}
+                                            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 mt-3">
+                                                <p className="font-bold text-primary text-sm uppercase mb-1">Giải thích:</p>
+                                                <p className="text-gray-800">{item.question.explanation}</p>
+                                                {item.question.type === 'fill' && <p className="mt-2 text-sm text-green-700 font-bold">Đáp án chấp nhận: {item.question.accepted.join(' / ')}</p>}
+                                                {item.question.type === 'ordering' && <p className="mt-2 text-sm text-green-700 font-bold">Thứ tự đúng: {item.question.correctOrder.join(' → ')}</p>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="min-h-screen pb-20">
+                    <header className="glass-header sticky top-0 z-50 px-4 py-3 flex justify-between items-center">
+                        <div className="flex items-center gap-2 cursor-pointer" onClick={goHome}>
+                            <div className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center text-xl shadow-md"><i className="fas fa-globe-asia"></i></div>
+                            <span className="font-heading font-extrabold text-2xl text-primary hidden sm:block">ASEAN Quest</span>
+                        </div>
+                        <div className="flex gap-4 items-center">
+                            {studentInfo && (
+                                <div className="text-sm font-bold text-gray-500 hidden md:block border-r pr-4">
+                                    Chào, <span className="text-primary">{studentInfo.name}</span>
+                                    <button onClick={() => {setStudentInfo(null); localStorage.removeItem('aseanQuestStudent')}} className="text-red-500 ml-2 hover:underline text-xs" title="Đăng nhập lại">(Đổi)</button>
+                                </div>
+                            )}
+                            <button onClick={goHome} className={`font-bold transition-colors ${view === 'home' ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}>Trang chủ</button>
+                            <button onClick={() => startPractice('mixed')} className={`font-bold transition-colors ${view === 'practice' && currentTopicId === 'mixed' ? 'text-pink' : 'text-gray-400 hover:text-pink'}`}>Ôn tổng hợp</button>
+                        </div>
+                    </header>
+                    <main>
+                        {view === 'home' && renderHome()}
+                        {view === 'theory' && renderTheory()}
+                        {view === 'practice' && renderPractice()}
+                        {view === 'results' && renderResults()}
+                    </main>
+                    {showLoginParams && (
+                        <LoginModal 
+                            onSubmit={(info) => { setStudentInfo(info); setShowLoginParams(null); startPractice(showLoginParams); }}
+                            onCancel={() => setShowLoginParams(null)}
+                        />
+                    )}
+                    {view === 'home' && (
+                        <footer className="text-center p-6 text-gray-400 text-sm mt-10">
+                            <p><i className="fas fa-info-circle mr-1"></i> Tiến độ học tập của bạn được lưu an toàn trên trình duyệt này.</p>
+                            <p className="mt-2">ASEAN Quest © 2026 - Bản cập nhật mới</p>
+                        </footer>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
